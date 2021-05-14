@@ -1,0 +1,40 @@
+# Use root/example as user/password credentials
+version: "2.1"
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+  # connect to mongo-express via http://127.0.0.1:8081,
+  # localhost and 0.0.0.0 does not work, the command line lies!
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+
+  menu-api:
+    image: curtbryan3rd/cb3-menu-api
+    depends_on: ["mongo"]
+    ports:
+      - 3000:8080
+
+  login-api:
+    image: curtbryan3rd/cb3-login-api
+    depends_on: ["mongo"]
+    ports:
+      - 3001:8080

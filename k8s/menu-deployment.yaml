@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: menu-api
+  name: menu-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: menu-api
+  template:
+    metadata:
+      labels:
+        service: menu-api
+    spec:
+      containers:
+      - image: curtbryan3rd/cb3-menu-api
+        name: menu-api
+        imagePullPolicy: Always  
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"                  
+      restartPolicy: Always
